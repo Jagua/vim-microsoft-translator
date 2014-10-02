@@ -1,0 +1,64 @@
+# microsoft-translator
+
+microsoft-translator is a plugin for Vim.
+
+This plugin depends on [webapi](https://github.com/mattn/webapi-vim) and the Microsoft Translator API.
+
+And **require an Access Token** to use the Microsoft Translator API. (refer to [Obtaining an Access Token](http://msdn.microsoft.com/en-us/library/hh454950.aspx))
+
+
+## Installation
+
+```vim
+        NeoBundleLazy 'vim-microsoft-translator', {
+        \             'depends' : ['mattn/webapi-vim'],
+        \             'function_prefix' : 'mstrans',
+        \ }
+        if neobundle#tap('vim-microsoft-translator') "{{{
+          let g:mstrans_appid = 'your Access Token to use the Microsoft Translator API'
+          let g:mstrans_to = 'ja'
+          let g:mstrans_pair = ['en', 'ja']
+          call neobundle#untap()
+        endif "}}}
+```
+
+
+## Usage
+
+```vim
+echo mstrans#translate('お前はここで終わりだがな！', 'ja', 'en')
+" => Without you here in the end!
+
+echo mstrans#translate('こいつはメチャゆるさんよなああああ', 'ja', 'en')
+" => This Mecha yurusann!, oh oh
+
+echo mstrans#translate('ultra soul', 'en', 'ja')
+" => 超魂
+```
+
+
+## Variables
+
+<dl>
+<dt>**`g:mstrans_appid`** (Required)</dt>
+<dd><p>define an access token to use the Microsoft Translator API.</p></dd>
+<dt>**`g:mstrans_pair`** (Optional)</dt>
+<dd>
+  <p>a pair of usual languages.</p>
+  <p>default : ['en', 'ja']</p>
+</dd>
+<dt>**`g:mstrans_to`** (Optional)</dt>
+<dd>
+  <p>define a language which translate to.</p>
+  <p>default: 'ja'</p>
+</dd>
+</dl>
+
+
+## Links
+
+An Access Token to use the Microsoft Translator API: refer to [Obtaining an Access Token](http://msdn.microsoft.com/en-us/library/hh454950.aspx).
+
+Available language codes: refer to [Translator Language Codes](http://msdn.microsoft.com/en-us/library/hh456380.aspx).
+
+
