@@ -10,7 +10,7 @@ And **require an Access Token** to use the Microsoft Translator API. (refer to [
 ## Installation
 
 ```vim
-        NeoBundleLazy 'vim-microsoft-translator', {
+        NeoBundleLazy 'Jagua/vim-microsoft-translator', {
         \             'depends' : ['mattn/webapi-vim'],
         \             'function_prefix' : 'mstrans',
         \ }
