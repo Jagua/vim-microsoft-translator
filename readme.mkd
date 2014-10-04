@@ -2,7 +2,7 @@
 
 microsoft-translator is a plugin for Vim.
 
-This plugin depends on [webapi](https://github.com/mattn/webapi-vim) and the Microsoft Translator API.
+This plugin depends on [webapi-vim](https://github.com/mattn/webapi-vim) and the Microsoft Translator API.
 
 And **require an Access Token** to use the Microsoft Translator API. (refer to [Obtaining an Access Token](http://msdn.microsoft.com/en-us/library/hh454950.aspx))
 
@@ -40,18 +40,12 @@ echo mstrans#translate('ultra soul', 'en', 'ja')
 ## Variables
 
 <dl>
-<dt>**`g:mstrans_appid`** (Required)</dt>
+<dt><code>g:mstrans_appid</code> (Required)</dt>
 <dd><p>define an access token to use the Microsoft Translator API.</p></dd>
-<dt>**`g:mstrans_pair`** (Optional)</dt>
-<dd>
-  <p>a pair of usual languages.</p>
-  <p>default : ['en', 'ja']</p>
-</dd>
-<dt>**`g:mstrans_to`** (Optional)</dt>
-<dd>
-  <p>define a language which translate to.</p>
-  <p>default: 'ja'</p>
-</dd>
+<dt><code>g:mstrans_pair</code> (Optional)</dt>
+<dd><p>a pair of usual languages. (default : ['en', 'ja'])</p></dd>
+<dt><code>g:mstrans_to</code> (Optional)</dt>
+<dd><p>define a language which translate to. (default: 'ja')</p></dd>
 </dl>
 
 
