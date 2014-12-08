@@ -8,40 +8,37 @@ let s:save_cpo = &cpo
 set cpo&vim
 
 
-let s:appId = get(g:, 'mstrans_appid', 0)
+let s:appId = get(g:, 'mstrans_appid', '')
 
 let s:lang_to = get(g:, 'mstrans_to', 'ja')
 
 let s:lang_pair = get(g:, 'mstrans_pair', ['en', 'ja'])
 
+let s:client_id = get(g:, 'mstrans_client_id', '')
 
-" The result is a Number, which is 0! if appId is set, and 0 otherwise.
-function! s:has_appId() "{{{
-  if s:appId == 0
-    echoerr 'microsoft-translator requires g:mstrans_appid.'
-    return 0
-  else
-    return !0
-  endif
-endfunction "}}}
+let s:client_secret = get(g:, 'mstrans_client_secret', '')
+
+let s:config = {'access_token' : '', 'expires' : 0}
 
 
 " The result is a String, which detected a language of {text}.
 function! mstrans#detect(text) "{{{
-  if s:has_appId()
+  if mstrans#auth()
     let url = 'http://api.microsofttranslator.com/V2/Http.svc/Detect'
     let param = {'appId' : s:appId,
     \            'text' : a:text}
-    let authToken = 'Bearer ' . s:appId
+    let authToken = 'Bearer ' . (empty(s:appId) ? s:config.access_token : s:appId)
     let res = webapi#http#get(url, param, {'Authorization' : authToken})
     if (res.status == '200')
       return webapi#xml#parse(res.content).value()
+    else
+      return ''
     endif
   endif
 endfunction "}}}
 
 
-" The result is a Number, which is 0! if |String| {text} has
+" The result is a Number, which is !0 if |String| {text} has
 " Hiragana or Katakana, and 0 otherwise.
 function! mstrans#has_kana(text) "{{{
   return match(a:text, '[\u3041-\u309f\u30a1-\u30ff\u31f0-\u31ff\u1b000-\u1b0ff]') > -1
@@ -61,7 +58,7 @@ endfunction "}}}
 " Omitting {from} and {to}, guess them by {text} and mstrans_* variables.
 " mstrans#translate({text} [, {from}, {to}])
 function! mstrans#translate(text, ...) "{{{
-  if s:has_appId()
+  if mstrans#auth()
     if a:0 == 2
       let from = a:000[0]
       let to = a:000[1] == '' ? s:lang_to : a:000[1]
@@ -84,12 +81,46 @@ function! mstrans#translate(text, ...) "{{{
     if from != ''
       let param.from = from
     endif
-    let authToken = 'Bearer ' . s:appId
+    let authToken = 'Bearer ' . (empty(s:appId) ? s:config.access_token : s:appId)
     let res = webapi#http#get(url, param, {'Authorization' : authToken})
     if (res.status == '200')
       return webapi#xml#parse(res.content).value()
     endif
   endif
+endfunction "}}}
+
+
+" The result is a Number, which is !0 if got an access token, and 0 otherwise.
+" An access token is set to {s:config}.
+function! mstrans#auth() "{{{
+  let result = 0
+  if (empty(s:client_id) || empty(s:client_secret)) && empty(s:appId)
+    echoerr 'Error: Require g:client_id and g:client_secret (or g:mstrans_appid)'
+  elseif !empty(s:client_id) && !empty(s:client_secret)
+  \      && (empty(s:config.access_token) || s:config.expires < localtime())
+    let ctx = {
+    \ 'client_id' : webapi#http#encodeURI(s:client_id),
+    \ 'client_secret' : webapi#http#encodeURI(s:client_secret),
+    \ 'scope' : 'http://api.microsofttranslator.com',
+    \ 'grant_type' : 'client_credentials',
+    \ }
+    let datamarket_access_uri =
+    \ 'https://datamarket.accesscontrol.windows.net/v2/OAuth2-13'
+    if !empty(ctx.client_id) && !empty(ctx.client_secret)
+      let request = join(values(map(ctx, 'v:key . "=" . v:val . "&"')), '')[:-2]
+      let response = webapi#http#post(datamarket_access_uri, request)
+      if response.status == '200'
+        let token = webapi#json#decode(response.content)
+        let s:config.access_token = token.access_token
+        let s:config.expires = localtime() + str2nr(token.expires_in)
+        let s:appId = ''
+        let result = !0
+      endif
+    endif
+  elseif !empty(s:appId)
+    let result = !0
+  endif
+  return result
 endfunction "}}}
 
 

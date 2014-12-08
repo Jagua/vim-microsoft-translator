@@ -15,7 +15,9 @@ And **require an Access Token** to use the Microsoft Translator API. (refer to [
         \             'function_prefix' : 'mstrans',
         \ }
         if neobundle#tap('vim-microsoft-translator') "{{{
-          let g:mstrans_appid = 'your Access Token to use the Microsoft Translator API'
+          "let g:mstrans_appid = 'xxxx'
+          let g:mstrans_client_id = 'xxxx'
+          let g:mstrans_client_secret = 'xxxx'
           let g:mstrans_to = 'ja'
           let g:mstrans_pair = ['en', 'ja']
           call neobundle#untap()
@@ -40,13 +42,19 @@ echo mstrans#translate('ultra soul', 'en', 'ja')
 ## Variables
 
 <dl>
-<dt><code>g:mstrans_appid</code> (Required)</dt>
+<dt><code>g:mstrans_appid</code> (<s>Required</s>Obsoleted)</dt>
 <dd><p>define an access token to use the Microsoft Translator API.</p></dd>
+<dt><code>g:mstrans_client_id</code> (Required)</dt>
+<dd><p>The client ID that you specified when you registered your application with Azure DataMarket. (*1)</p></dd>
+<dt><code>g:mstrans_client_secret</code> (Required)</dt>
+<dd><p>The client secret value that you obtained when you registered your application with Azure DataMarket. (*1)</p></dd>
 <dt><code>g:mstrans_pair</code> (Optional)</dt>
 <dd><p>a pair of usual languages. (default : ['en', 'ja'])</p></dd>
 <dt><code>g:mstrans_to</code> (Optional)</dt>
 <dd><p>define a language which translate to. (default: 'ja')</p></dd>
 </dl>
+
+(*1) http://msdn.microsoft.com/en-us/library/hh454950.aspx
 
 
 ## Links
